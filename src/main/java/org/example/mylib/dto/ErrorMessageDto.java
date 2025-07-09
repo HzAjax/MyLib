@@ -18,28 +18,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ErrorMessageDto {
-
-    @Schema(
-            description = "Human-readable error message",
-            example = "term: Minimum term is 6 months"
-    )
     private String message;
-
-    @Schema(
-            description = "HTTP status code",
-            example = "400"
-    )
     private int status;
-
-    @Schema(
-            description = "Request path where the error occurred",
-            example = "/calculator/calc"
-    )
     private String path;
-
-    @Schema(
-            description = "Timestamp of when the error occurred",
-            example = "2025-06-17T10:38:14.8931083"
-    )
     private LocalDateTime timestamp;
 }
