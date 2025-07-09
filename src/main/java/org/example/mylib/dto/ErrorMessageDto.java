@@ -9,9 +9,6 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Schema(
-        description = "DTO that describes error details returned in case of API failure or validation error"
-)
 @Builder
 @Getter
 @Setter
@@ -22,4 +19,5 @@ public class ErrorMessageDto {
     private int status;
     private String path;
     private LocalDateTime timestamp;
+    private ErrorMessageDto details;
 }

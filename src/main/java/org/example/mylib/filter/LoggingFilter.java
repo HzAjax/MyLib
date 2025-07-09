@@ -34,7 +34,9 @@ public class LoggingFilter implements Filter {
             String uri = wrappedRequest.getRequestURI();
             String query = wrappedRequest.getQueryString();
 
-            log.info("Incoming request: {} {}{}", method, uri, query != null ? "?" + query : "");
+            if (!"OFF".equalsIgnoreCase(properties.getLevel())) {
+                log.info("Incoming request: {} {}{}", method, uri, query != null ? "?" + query : "");
+            }
 
             chain.doFilter(wrappedRequest, wrappedResponse);
 
@@ -42,9 +44,14 @@ public class LoggingFilter implements Filter {
             String responseBody = new String(wrappedResponse.getContentAsByteArray(), wrappedResponse.getCharacterEncoding());
 
             int status = wrappedResponse.getStatus();
-            log.debug("Request body: {}", requestBody);
-            log.info("Outgoing response: {} {} -> HTTP {}", method, uri, status);
-            log.debug("Response body: {}", responseBody);
+            if (!"OFF".equalsIgnoreCase(properties.getLevel())) {
+                log.info("Outgoing response: {} {} -> HTTP {}", method, uri, status);
+            }
+
+            if ("DEBUG".equalsIgnoreCase(properties.getLevel())) {
+                log.debug("Request body: {}", requestBody);
+                log.debug("Response body: {}", responseBody);
+            }
 
             wrappedResponse.copyBodyToResponse();
         } else {

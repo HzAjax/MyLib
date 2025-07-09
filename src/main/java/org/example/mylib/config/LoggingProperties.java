@@ -11,4 +11,5 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "app.logging")
 public class LoggingProperties {
     private boolean httpFilterEnabled;
+    private String level;
 }

@@ -1,6 +1,8 @@
 package org.example.mylib.exception;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.mylib.dto.ErrorMessageDto;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
@@ -19,7 +22,10 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class ControllerExceptionHandler {
+
+    private final ObjectMapper objectMapper;
 
     private ErrorMessageDto buildError(String message, HttpStatus status, WebRequest request) {
         return ErrorMessageDto.builder()
@@ -27,6 +33,16 @@ public class ControllerExceptionHandler {
                 .status(status.value())
                 .timestamp(LocalDateTime.now())
                 .path(request.getDescription(false).replace("uri=", ""))
+                .build();
+    }
+
+    private ErrorMessageDto buildError(String message, HttpStatus status, WebRequest request, ErrorMessageDto details) {
+        return ErrorMessageDto.builder()
+                .message(message)
+                .status(status.value())
+                .timestamp(LocalDateTime.now())
+                .path(request.getDescription(false).replace("uri=", ""))
+                .details(details)
                 .build();
     }
 
@@ -83,6 +99,24 @@ public class ControllerExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(buildError(message, HttpStatus.BAD_REQUEST, request));
+    }
+
+    @ExceptionHandler(HttpStatusCodeException.class)
+    public ResponseEntity<ErrorMessageDto> handleHttpClientException(HttpStatusCodeException e, WebRequest request) {
+        log.error("Remote service error response: {}", e.getResponseBodyAsString());
+
+        ErrorMessageDto nested = null;
+        try {
+            nested = objectMapper.readValue(e.getResponseBodyAsString(), ErrorMessageDto.class);
+        } catch (Exception ex) {
+            log.warn("Failed to deserialize nested ErrorMessageDto", ex);
+        }
+
+        String topMessage = "Remote service error: " + (nested != null ? nested.getMessage() : e.getStatusText());
+
+        return ResponseEntity
+                .status(e.getStatusCode())
+                .body(buildError(topMessage, (HttpStatus) e.getStatusCode(), request, nested));
     }
 
     @ExceptionHandler(Exception.class)
