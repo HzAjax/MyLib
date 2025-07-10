@@ -101,6 +101,61 @@ public class ControllerExceptionHandler {
                 .body(buildError(message, HttpStatus.BAD_REQUEST, request));
     }
 
+    @ExceptionHandler(ScoringException.class)
+    public ResponseEntity<ErrorMessageDto> handleScoringException(ScoringException e, WebRequest request) {
+        ErrorMessageDto nested = null;
+
+        String raw = e.getRawRemoteError();
+        try {
+            if (raw != null) {
+                if (raw.startsWith("\"{") && raw.endsWith("}\"")) {
+                    String unquoted = objectMapper.readValue(raw, String.class);
+                    nested = objectMapper.readValue(unquoted, ErrorMessageDto.class);
+                } else if (raw.startsWith("{")) {
+                    nested = objectMapper.readValue(raw, ErrorMessageDto.class);
+                }
+            }
+        } catch (Exception ex) {
+            log.warn("Failed to deserialize nested ErrorMessageDto from ScoringException", ex);
+        }
+
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(buildError(
+                        e.getMessage(),
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        request,
+                        nested
+                ));
+    }
+
+    @ExceptionHandler(OffersException.class)
+    public ResponseEntity<ErrorMessageDto> handleOffersException(OffersException e, WebRequest request) {
+        ErrorMessageDto nested = null;
+        try {
+            String raw = e.getRawRemoteError();
+            if (raw != null) {
+                if (raw.startsWith("\"{") && raw.endsWith("}\"")) {
+                    String unquoted = objectMapper.readValue(raw, String.class);
+                    nested = objectMapper.readValue(unquoted, ErrorMessageDto.class);
+                } else if (raw.startsWith("{")) {
+                    nested = objectMapper.readValue(raw, ErrorMessageDto.class);
+                }
+            }
+        } catch (Exception ex) {
+            log.warn("Failed to deserialize nested ErrorMessageDto from OffersException", ex);
+        }
+
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(buildError(
+                        e.getMessage(),
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        request,
+                        nested
+                ));
+    }
+
     @ExceptionHandler(HttpStatusCodeException.class)
     public ResponseEntity<ErrorMessageDto> handleHttpClientException(HttpStatusCodeException e, WebRequest request) {
         log.error("Remote service error response: {}", e.getResponseBodyAsString());
