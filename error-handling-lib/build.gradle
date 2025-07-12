@@ -1,0 +1,66 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'org.springframework.boot' version '3.5.2'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            groupId = 'ru.volodin'
+            artifactId = 'error-handling-lib'
+            version = '1.0.0'
+        }
+    }
+}
+
+group = 'ru.volodin'
+version = '1.0.0'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+ext.versions = [
+        springDoc: '2.8.8',
+        lombok   : '1.18.30',
+        junit    : '1.10.0',
+        jakarta  : '3.1.0'
+]
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+
+    implementation "jakarta.persistence:jakarta.persistence-api:${versions.jakarta}"
+
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${versions.springDoc}"
+
+    compileOnly "org.projectlombok:lombok:${versions.lombok}"
+    annotationProcessor "org.projectlombok:lombok:${versions.lombok}"
+
+    compileOnly "jakarta.servlet:jakarta.servlet-api:6.0.0"
+
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+}
+
+springBoot {
+    mainClass = null
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
