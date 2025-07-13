@@ -1,5 +1,5 @@
 rootProject.name = 'my-lib'
 
-include 'error-handling-lib'
-include 'logging-lib'
+include 'error-handling'
+include 'logging'
 include 'my-lib-starter'

@@ -9,8 +9,9 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/error-handling-lib" />
-            <option value="$PROJECT_DIR$/logging-lib" />
+            <option value="$PROJECT_DIR$/error-handling" />
+            <option value="$PROJECT_DIR$/logging" />
+            <option value="$PROJECT_DIR$/my-lib-starter" />
           </set>
         </option>
       </GradleProjectSettings>

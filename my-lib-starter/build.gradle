@@ -19,8 +19,8 @@ repositories {
 }
 
 dependencies {
-    api project(':error-handling-lib')
-    api project(':logging-lib')
+    api project(':error-handling')
+    api project(':logging')
 
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
 }

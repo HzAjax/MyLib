@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SonarLintProjectSettings">
+    <option name="moduleMapping">
+      <map>
+        <entry key="error-handling" value="error-handling-lib" />
+        <entry key="my-lib.logging" value="my-lib.logging-lib" />
+      </map>
+    </option>
+  </component>
+</project>
