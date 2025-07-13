@@ -1,0 +1,44 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'org.springframework.boot' version '3.5.2'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'ru.volodin'
+version = '1.0.0'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    api project(':error-handling-lib')
+    api project(':logging-lib')
+
+    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+}
+
+springBoot {
+    mainClass = null
+}
+
+bootJar { enabled = false }
+jar { enabled = true }
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            groupId = 'ru.volodin'
+            artifactId = 'my-lib-starter'
+            version = '1.0.0'
+        }
+    }
+}

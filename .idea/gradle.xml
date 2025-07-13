@@ -14,6 +14,9 @@
           </set>
         </option>
       </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/my-lib-starter" />
+      </GradleProjectSettings>
     </option>
   </component>
 </project>
